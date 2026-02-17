@@ -23,7 +23,7 @@ resource "random_string" "suffix" {
   upper   = false
 }
 
-# The "Container Instance" (Replaces Service Plan and Web App)
+# The "Container Instance"
 resource "azurerm_container_group" "pulse_backend" {
   name                = "aci-cloudpulse-backend"
   location            = azurerm_resource_group.pulse_rg.location
@@ -46,7 +46,7 @@ resource "azurerm_container_group" "pulse_backend" {
   }
 }
 
-# Output the URL so we can test it immediately
+# Output URL
 output "backend_url" {
   value = "http://${azurerm_container_group.pulse_backend.fqdn}"
 }
