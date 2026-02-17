@@ -23,7 +23,6 @@ resource "random_string" "suffix" {
   upper   = false
 }
 
-# The "Container Instance"
 resource "azurerm_container_group" "pulse_backend" {
   name                = "aci-cloudpulse-backend"
   location            = azurerm_resource_group.pulse_rg.location
@@ -32,10 +31,17 @@ resource "azurerm_container_group" "pulse_backend" {
   dns_name_label      = "cloudpulse-api-${random_string.suffix.result}"
   os_type             = "Linux"
 
+  
+  image_registry_credential {
+    server   = azurerm_container_registry.pulse_acr.login_server
+    username = azurerm_container_registry.pulse_acr.admin_username
+    password = azurerm_container_registry.pulse_acr.admin_password
+  }
+
   container {
     name   = "cloudpulse-backend"
-    # Using a Microsoft test image first to verify deployment works
-    image  = "mcr.microsoft.com/azuredocs/aci-helloworld" 
+    # POINT TO YOUR NEW IMAGE HERE
+    image  = "${azurerm_container_registry.pulse_acr.login_server}/cloudpulse-backend:latest"
     cpu    = "0.5"
     memory = "1.5"
 
@@ -44,11 +50,6 @@ resource "azurerm_container_group" "pulse_backend" {
       protocol = "TCP"
     }
   }
-}
-
-# Output URL
-output "backend_url" {
-  value = "http://${azurerm_container_group.pulse_backend.fqdn}"
 }
 
 # The Registry

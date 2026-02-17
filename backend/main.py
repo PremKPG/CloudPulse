@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
+#Returns the status
 app = FastAPI()
-
 @app.get("/")
 def read_root():
     return {"status": "CloudPulse API is Online"}
